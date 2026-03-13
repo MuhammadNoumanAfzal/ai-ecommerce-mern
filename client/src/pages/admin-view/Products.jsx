@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CommonForm from "@/components/comman/Form";
@@ -11,6 +11,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import ProductImageUpload from "@/components/admin-view/Image-upload";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllProducts } from "@/store/admin/product-slice/Index";
 
 const initialFormData = {
   image: null,
@@ -30,12 +32,20 @@ const AdminProducts = () => {
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const [imageLoadingState, setImageLoadingState] = useState(false);
+  const dispatch = useDispatch();
+  const { productList } = useSelector((state) => state.adminProducts);
 
   function onSubmit(event) {
     event.preventDefault();
+
     console.log(formData);
   }
 
+  useEffect(() => {
+    dispatchEvent(fetchAllProducts());
+  }, [dispatch]);
+
+  console.log(productList, "productList");
   return (
     <div className="w-full">
       <div className="mb-6 flex items-center justify-end">

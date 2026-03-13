@@ -28,6 +28,145 @@ const handleImageUpload = async (req, res) => {
 };
 
 
+//add new product
+const addProduct=async(req,res)=>{
+ 
+
+
+  try{
+     const {
+    title,
+    description,
+    category, 
+    brand,
+    price,
+    salePrice,
+    totalStock,
+    averageReview,
+    image
+  }=req.body
+
+  const newlyCreatedProdut=new Product({
+    title,
+    description,
+    category, 
+    brand,
+    price,
+    salePrice,
+    totalStock,
+    averageReview,
+    image
+  })  
+
+  await newlyCreatedProdut.save()
+  res.status(201).json({
+    success:true,
+    message:"Product created successfully",
+    data:newlyCreatedProdut
+  })
+
+
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).json({
+      success:false,
+      message:error.message})
+    
+  }
+}
+
+
+//get all products
+const fetchAllProducts=async(req,res)=>{
+  try{
+    const listOfProducts=await Product.find()
+    res.status(200).json({
+      success:true,
+      data:listOfProducts
+    })
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).json({
+      success:false,
+      message:error.message})
+    
+  }
+
+
+
+ 
+}
+ //edit product
+const editProduct=async(req,res)=>{
+  try{
+    const {
+    title,
+    description,
+    category, 
+    brand,
+    price,
+    salePrice,
+    totalStock,
+    averageReview,
+    image
+    }=req.body
+
+    const updatedProduct=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true})
+    if(!updatedProduct){
+      return res.status(404).json({
+        success:false,
+        message:"Product not found"
+      })
+    }
+    res.status(200).json({
+      success:true,
+      message:"Product updated successfully",
+      data:updatedProduct
+    })
+
+
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).json({
+      success:false,
+      message:error.message})
+    
+  }
+}
+
+//DELETE product
+const deleteProduct=async(req,res)=>{
+  try{
+    const deletedProduct=await Product.findByIdAndDelete(req.params.id)
+    if(!deletedProduct){
+      return res.status(404).json({
+        success:false,
+        message:"Product not found"
+      })
+    }
+    res.status(200).json({
+      success:true,
+      message:"Product deleted successfully",
+      data:deletedProduct
+    })
+  }
+  catch(error){
+    console.log(error)
+    res.status(500).json({
+      success:false,
+      message:error.message})
+    
+  }
+}
+
+
 module.exports = {
   handleImageUpload,
+  addProduct,
+  fetchAllProducts,
+  editProduct,
+  deleteProduct
 };
