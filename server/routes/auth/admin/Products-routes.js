@@ -1,7 +1,13 @@
 
 const express=require("express");
 const router=express.Router();
-const {handleImageUpload, addProduct, fetchAllProducts}=require("../../../controllers/admin/productController");
+const {
+  handleImageUpload,
+  addProduct,
+  fetchAllProducts,
+  editProduct,
+  deleteProduct,
+}=require("../../../controllers/admin/productController");
 const {upload}=require("../../../helpers/cloudinary");
 
 

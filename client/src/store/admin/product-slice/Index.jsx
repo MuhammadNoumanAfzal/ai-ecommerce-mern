@@ -25,16 +25,12 @@ export const addNewProduct = createAsyncThunk(
 
 export const fetchAllProducts = createAsyncThunk(
   "products/fetchAllProducts",
-  async (formData) => {
-    const result = await axios.get(
-      "http://localhost:3000/api/admin/products/get",
-      formData,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
+  async () => {
+    const result = await axios.get("http://localhost:3000/api/admin/products/get", {
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     return result.data;
   },

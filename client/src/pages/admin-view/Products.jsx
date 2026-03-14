@@ -37,12 +37,13 @@ const AdminProducts = () => {
 
   function onSubmit(event) {
     event.preventDefault();
+    
 
     console.log(formData);
   }
 
   useEffect(() => {
-    dispatchEvent(fetchAllProducts());
+    dispatch(fetchAllProducts());
   }, [dispatch]);
 
   console.log(productList, "productList");
