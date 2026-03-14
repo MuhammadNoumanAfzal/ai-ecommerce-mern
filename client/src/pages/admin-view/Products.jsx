@@ -11,8 +11,14 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import ProductImageUpload from "@/components/admin-view/Image-upload";
+import AdminProductTile from "@/components/admin-view/ProductTile";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts } from "@/store/admin/product-slice/Index";
+import {
+  addNewProduct,
+  editProduct,
+  fetchAllProducts,
+} from "@/store/admin/product-slice/Index";
+import { toast } from "sonner";
 
 const initialFormData = {
   image: null,
@@ -28,6 +34,7 @@ const initialFormData = {
 const AdminProducts = () => {
   const [openCreateProductsDialog, setOpenCreateProductsDialog] =
     useState(false);
+  const [currentEditedId, setCurrentEditedId] = useState(null);
   const [formData, setFormData] = useState(initialFormData);
   const [imageFile, setImageFile] = useState(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
@@ -35,23 +42,99 @@ const AdminProducts = () => {
   const dispatch = useDispatch();
   const { productList } = useSelector((state) => state.adminProducts);
 
+  function resetProductForm() {
+    setCurrentEditedId(null);
+    setFormData(initialFormData);
+    setImageFile(null);
+    setUploadedImageUrl(null);
+    setOpenCreateProductsDialog(false);
+  }
+
   function onSubmit(event) {
     event.preventDefault();
-    
 
-    console.log(formData);
+    if (imageLoadingState) {
+      toast.error("Please wait for the image to finish uploading");
+      return;
+    }
+
+    const finalImageUrl = uploadedImageUrl || formData.image;
+
+    if (!finalImageUrl) {
+      toast.error("Please upload a product image before saving");
+      return;
+    }
+
+    const action = currentEditedId
+      ? editProduct({
+          id: currentEditedId,
+          formData: {
+            ...formData,
+            image: finalImageUrl,
+          },
+        })
+      : addNewProduct({
+          ...formData,
+          image: finalImageUrl,
+        });
+
+    dispatch(action).then((data) => {
+      console.log(data);
+      if (data?.payload?.success) {
+        resetProductForm();
+        dispatch(fetchAllProducts());
+        toast.success(
+          data.payload.message ||
+            (currentEditedId
+              ? "Product updated successfully"
+              : "Product added successfully"),
+        );
+        return;
+      }
+
+      toast.error(
+        data?.payload?.message ||
+          (currentEditedId ? "Failed to update product" : "Failed to add product"),
+      );
+    });
   }
 
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (uploadedImageUrl) {
+      setFormData((prev) => ({
+        ...prev,
+        image: uploadedImageUrl,
+      }));
+    }
+  }, [uploadedImageUrl]);
+
+  useEffect(() => {
+    if (currentEditedId && formData?.image) {
+      setUploadedImageUrl(formData.image);
+      return;
+    }
+
+    if (!currentEditedId) {
+      setUploadedImageUrl(null);
+    }
+  }, [currentEditedId, formData]);
+
   console.log(productList, "productList");
   return (
     <div className="w-full">
       <div className="mb-6 flex items-center justify-end">
         <Button
-          onClick={() => setOpenCreateProductsDialog(true)}
+          onClick={() => {
+            setCurrentEditedId(null);
+            setFormData(initialFormData);
+            setImageFile(null);
+            setUploadedImageUrl(null);
+            setOpenCreateProductsDialog(true);
+          }}
           className="rounded-2xl border border-slate-700 bg-slate-100 px-5 py-2.5 text-slate-950 shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-500 hover:text-white"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -59,7 +142,23 @@ const AdminProducts = () => {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4"></div>
+      <div className="grid items-stretch gap-4 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+        {productList?.length > 0 ? (
+          productList.map((product) => (
+            <AdminProductTile
+              key={product._id}
+              product={product}
+              setFormData={setFormData}
+              setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+              setCurrentEditedId={setCurrentEditedId}
+            />
+          ))
+        ) : (
+          <div className="col-span-full rounded-3xl border border-slate-800 bg-slate-950/70 p-8 text-center text-slate-400">
+            No products found yet.
+          </div>
+        )}
+      </div>
 
       <Sheet
         open={openCreateProductsDialog}
@@ -107,7 +206,7 @@ const AdminProducts = () => {
                   formData={formData}
                   setFormData={setFormData}
                   onSubmit={onSubmit}
-                  buttonText="Save Product"
+                  buttonText={currentEditedId ? "Update Product" : "Save Product"}
                   formClassName="space-y-4"
                   fieldClassName="rounded-2xl border border-slate-800 bg-slate-900/70 p-3.5 shadow-sm"
                   labelClassName="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-400"
@@ -128,6 +227,7 @@ const AdminProducts = () => {
                 uploadedImageUrl={uploadedImageUrl}
                 setUploadedImageUrl={setUploadedImageUrl}
                 setImageLoadingState={setImageLoadingState}
+                isEditMode={Boolean(currentEditedId)}
                 isCustomStyling
               />
             </div>

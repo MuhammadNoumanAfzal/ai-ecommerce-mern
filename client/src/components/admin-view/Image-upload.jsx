@@ -82,9 +82,7 @@ function ProductImageUpload({
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`${
-          isEditMode ? "opacity-60" : ""
-        } rounded-[24px] border border-dashed border-slate-700 bg-slate-950/72 p-4 shadow-[0_20px_60px_rgba(2,6,23,0.35)]`}
+        className="rounded-[24px] border border-dashed border-slate-700 bg-slate-950/72 p-4 shadow-[0_20px_60px_rgba(2,6,23,0.35)]"
       >
         <Input
           id="image-upload"
@@ -92,18 +90,17 @@ function ProductImageUpload({
           className="hidden"
           ref={inputRef}
           onChange={handleImageFileChange}
-          disabled={isEditMode}
         />
         {!imageFile ? (
           <Label
             htmlFor="image-upload"
-            className={`${
-              isEditMode ? "cursor-not-allowed" : ""
-            } flex h-36 cursor-pointer flex-col items-center justify-center rounded-[20px] border border-dashed border-emerald-500/25 bg-[linear-gradient(180deg,rgba(15,23,42,0.9)_0%,rgba(17,24,39,0.95)_100%)] px-4 text-center`}
+            className="flex h-36 cursor-pointer flex-col items-center justify-center rounded-[20px] border border-dashed border-emerald-500/25 bg-[linear-gradient(180deg,rgba(15,23,42,0.9)_0%,rgba(17,24,39,0.95)_100%)] px-4 text-center"
           >
             <UploadCloudIcon className="mb-3 h-10 w-10 text-emerald-400" />
             <span className="text-sm font-medium text-slate-100">
-              Drag and drop or click to upload image
+              {isEditMode
+                ? "Drag and drop or click to replace image"
+                : "Drag and drop or click to upload image"}
             </span>
             <span className="mt-2 text-xs text-slate-400">
               Use a clean product image for a stronger catalog view.
