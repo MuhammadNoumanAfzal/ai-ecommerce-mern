@@ -1,13 +1,14 @@
-import {
-  AlignJustify,
-  Bell,
-  LogOut,
-  Search,
-  Sparkles,
-} from "lucide-react";
+import { AlignJustify, Bell, LogOut, Search, Sparkles } from "lucide-react";
 import { Button } from "../ui/button";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "@/store/auth-slice";
 
 function AdminHeader({ setOpen }) {
+  const dispatch = useDispatch();
+
+  function handleLogout() {
+    dispatch(logoutUser());
+  }
   return (
     <header className="sticky top-0 z-30 px-4 pt-4 sm:px-6 lg:px-8">
       <div className="rounded-[30px] border border-slate-800/80 bg-slate-950/72 px-4 py-4 shadow-[0_18px_60px_rgba(2,6,23,0.45)] backdrop-blur-xl sm:px-6">
@@ -74,7 +75,10 @@ function AdminHeader({ setOpen }) {
                 </div>
               </div>
 
-              <Button className="group rounded-2xl border border-slate-700 bg-slate-100 px-4 py-2.5 text-slate-950 shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-500 hover:text-white">
+              <Button
+                onClick={handleLogout}
+                className="group rounded-2xl border border-slate-700 bg-slate-100 px-4 py-2.5 text-slate-950 shadow-lg shadow-black/30 transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-500 hover:text-white"
+              >
                 <LogOut className="mr-2 h-4 w-4 transition-transform duration-300 group-hover:rotate-6" />
                 <span className="font-medium tracking-wide">Logout</span>
               </Button>
