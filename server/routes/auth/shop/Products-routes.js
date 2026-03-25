@@ -4,7 +4,6 @@ const router=express.Router();
 const {
  getFilterProducts,
 }=require("../../../controllers/shop/productsController");
-const {upload}=require("../../../helpers/cloudinary");
 
 
 

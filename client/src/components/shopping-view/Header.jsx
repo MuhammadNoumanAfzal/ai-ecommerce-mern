@@ -69,6 +69,7 @@ function HeaderRightContent({ user }) {
             <LogOut className="mr-2 h-4 w-4" />
             Logout
           </DropdownMenuItem>
+          
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
