@@ -38,6 +38,8 @@ function MenuItems() {
 // ---------------- Right Side (User) ----------------
 function HeaderRightContent({ user }) {
   const dispatch = useDispatch();
+  const displayName = user?.username || user?.userName || user?.name || "";
+  const avatarLetter = displayName?.trim()?.[0]?.toUpperCase() || "U";
 
   function handleLogout() {
     dispatch(logoutUser());
@@ -50,13 +52,15 @@ function HeaderRightContent({ user }) {
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-black cursor-pointer">
             <AvatarFallback className="bg-black text-white font-extrabold">
-              {user?.userName?.[0]?.toUpperCase() || "U"}
+              {avatarLetter}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent side="right" className="w-56">
-          <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            Logged in as {displayName || "User"}
+          </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
 
