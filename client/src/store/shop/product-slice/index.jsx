@@ -7,12 +7,19 @@ const initialState = {
 
 export const fetchAllFilteredProducts = createAsyncThunk(
   "products/fetchAllProducts",
-  async () => {
-    const result = await axios.get("http://localhost:3000/api/shop/products/get", {
-      headers: {
-        "Content-Type": "application/json",
-      },
+  async ({ filtersParams = {}, sortParams = "price-lowtohigh" }) => {
+    const query = new URLSearchParams({
+      ...filtersParams,
+      sortBy: sortParams,
     });
+    const result = await axios.get(
+      `http://localhost:3000/api/shop/products/get?${query.toString()}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
     return result.data;
   },
