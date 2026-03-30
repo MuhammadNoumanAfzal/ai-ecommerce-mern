@@ -15,7 +15,7 @@ function ProductDetailsDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 sm:p-8 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
+      <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-5 overflow-y-auto p-4 sm:p-5 md:grid-cols-2 md:gap-6 max-w-[88vw] sm:max-w-[70vw] lg:max-w-[58vw]">
         {/* Product Image */}
         <div className="relative overflow-hidden rounded-xl border bg-muted/20">
           <img
@@ -23,24 +23,24 @@ function ProductDetailsDialog({
             alt={productDetails?.title}
             width={600}
             height={600}
-            className="aspect-square w-full object-cover"
+            className="aspect-square max-h-[320px] w-full object-cover"
           />
         </div>
 
         {/* Product Info */}
         <div className="flex flex-col">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
               {productDetails?.title}
             </h1>
 
-            <p className="text-muted-foreground text-base sm:text-lg mt-4 leading-7">
+            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
               {productDetails?.description}
             </p>
           </div>
 
           {/* Extra Info */}
-          <div className="flex flex-wrap gap-3 mt-5">
+          <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded-full border px-3 py-1 text-sm">
               Category: {productDetails?.category}
             </span>
@@ -50,18 +50,18 @@ function ProductDetailsDialog({
           </div>
 
           {/* Price */}
-          <div className="flex items-center gap-4 mt-6">
+          <div className="mt-5 flex items-center gap-3">
             {hasSalePrice ? (
               <>
-                <p className="text-2xl sm:text-3xl font-bold text-muted-foreground line-through">
+                <p className="text-xl font-bold text-muted-foreground line-through sm:text-2xl">
                   ${productDetails?.price}
                 </p>
-                <p className="text-3xl sm:text-4xl font-bold text-primary">
+                <p className="text-2xl font-bold text-primary sm:text-3xl">
                   ${productDetails?.salePrice}
                 </p>
               </>
             ) : (
-              <p className="text-3xl sm:text-4xl font-bold text-primary">
+              <p className="text-2xl font-bold text-primary sm:text-3xl">
                 ${productDetails?.price}
               </p>
             )}
@@ -83,7 +83,7 @@ function ProductDetailsDialog({
           </div>
 
           {/* Add to Cart */}
-          <div className="mt-6">
+          <div className="mt-5">
             {productDetails?.totalStock === 0 ? (
               <Button className="w-full opacity-60 cursor-not-allowed" disabled>
                 Out of Stock
@@ -103,15 +103,15 @@ function ProductDetailsDialog({
             )}
           </div>
 
-          <Separator className="my-8" />
+          <Separator className="my-6" />
 
           {/* Static Reviews */}
           <div>
-            <h2 className="text-xl font-bold mb-4">Customer Reviews</h2>
+            <h2 className="mb-3 text-lg font-bold">Customer Reviews</h2>
 
-            <div className="grid gap-4 max-h-[260px] overflow-auto pr-2">
-              <div className="rounded-lg border p-4">
-                <div className="flex items-center justify-between mb-2">
+            <div className="grid max-h-[200px] gap-3 overflow-auto pr-2">
+              <div className="rounded-lg border p-3">
+                <div className="mb-2 flex items-center justify-between">
                   <h3 className="font-semibold">Ali Khan</h3>
                   <span className="text-sm text-yellow-500">★★★★★</span>
                 </div>
@@ -121,8 +121,8 @@ function ProductDetailsDialog({
                 </p>
               </div>
 
-              <div className="rounded-lg border p-4">
-                <div className="flex items-center justify-between mb-2">
+              <div className="rounded-lg border p-3">
+                <div className="mb-2 flex items-center justify-between">
                   <h3 className="font-semibold">Sara Ahmed</h3>
                   <span className="text-sm text-yellow-500">★★★★☆</span>
                 </div>
@@ -131,8 +131,8 @@ function ProductDetailsDialog({
                 </p>
               </div>
 
-              <div className="rounded-lg border p-4">
-                <div className="flex items-center justify-between mb-2">
+              <div className="rounded-lg border p-3">
+                <div className="mb-2 flex items-center justify-between">
                   <h3 className="font-semibold">Usman</h3>
                   <span className="text-sm text-yellow-500">★★★★★</span>
                 </div>
