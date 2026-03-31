@@ -7,6 +7,7 @@ const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductRouter = require("./routes/auth/admin/Products-routes");
 const shopProductRouter = require("./routes/auth/shop/Products-routes");
+const shopCartRouter = require("./routes/auth/shop/Cart-routes");
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
 const DEFAULT_CLIENT_ORIGINS = [
@@ -69,6 +70,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductRouter);
 
 app.use("/api/shop/products", shopProductRouter);
+app.use("/api/shop/cart", shopCartRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
