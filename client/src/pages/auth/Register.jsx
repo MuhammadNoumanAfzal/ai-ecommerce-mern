@@ -29,7 +29,8 @@ function AuthRegister() {
         navigate("/auth/login");
       } else {
         toast.error("Account creation failed", {
-          description: "Please try again",
+          description:
+            action.payload?.message || "Please try again",
         });
       }
     });

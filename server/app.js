@@ -7,7 +7,7 @@ const cors = require("cors");
 const authRouter = require("./routes/auth/auth-routes");
 const adminProductRouter = require("./routes/auth/admin/Products-routes");
 const shopProductRouter = require("./routes/auth/shop/Products-routes");
-const shopCartRouter = require("./routes/auth/shop/Cart-routes");
+const shopCartRouter = require("./routes/auth/shop/cart-routes");
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI;
 const DEFAULT_CLIENT_ORIGINS = [
@@ -24,6 +24,19 @@ const CLIENT_ORIGINS = (
 )
   .map((origin) => origin.trim())
   .filter(Boolean);
+
+const isLocalDevOrigin = (origin) => {
+  try {
+    const { hostname, protocol } = new URL(origin);
+
+    return (
+      protocol === "http:" &&
+      (hostname === "localhost" || hostname === "127.0.0.1")
+    );
+  } catch (error) {
+    return false;
+  }
+};
 
 if (!MONGODB_URI) {
   throw new Error("MONGODB_URI is missing from environment variables.");
@@ -44,7 +57,11 @@ const app = express();
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || CLIENT_ORIGINS.includes(origin)) {
+      if (
+        !origin ||
+        CLIENT_ORIGINS.includes(origin) ||
+        isLocalDevOrigin(origin)
+      ) {
         return callback(null, true);
       }
 

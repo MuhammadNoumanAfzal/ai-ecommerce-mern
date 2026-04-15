@@ -162,54 +162,80 @@ const updateCartItemQty = async (req, res) => {
 };
 
 const deleteCartItem = async (req, res) => {
-  try {
-    const { userId, productId } = req.body;
+try {
+const { userId, productId } = req.body;
 
-    if (!userId || !productId) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required fields",
-      });
-    }
-    
-  const cart = await Cart.findOne({ userId }).populate({
-      path: "items.productId",
-      select: "image title price salePrice",
-    });
-    
-    if (!cart) {
-      return res.status(404).json({
-        success: false,
-        error: "Cart not found",
-      });
-    }
-    cart.items = cart.items.filter(
-      (item) => item.productId._id.toString() !== productId,
-    );
+// 1. Validate input
+if (!userId || !productId) {
+  return res.status(400).json({
+    success: false,
+    error: "Missing required fields",
+  });
+}
 
-    await cart.save();
+// 2. Find cart
+const cart = await Cart.findOne({ userId }).populate({
+  path: "items.productId",
+  select: "image title price salePrice",
+});
+
+if (!cart) {
+  return res.status(404).json({
+    success: false,
+    error: "Cart not found",
+  });
+}
+
+// 3. Remove item from cart
+const initialLength = cart.items.length;
+
+cart.items = cart.items.filter(
+  (item) => item.productId._id.toString() !== productId
+);
+
+// Optional: check if item was actually removed
+if (cart.items.length === initialLength) {
+  return res.status(404).json({
+    success: false,
+    error: "Item not found in cart",
+  });
+}
+
+// 4. Save updated cart
+await cart.save();
+
+// 5. Re-populate after save
 await cart.populate({
-      path: "items.productId",
-      select: "image title price salePrice",
-    });
-    const populateCartItems=cart.items.map((item) => ({
-      productId:item.productId? item.productId._id: null,
-      title: item.productId?.title,
-      image: item.productId?.image,
-      price: item.productId?.price,
-      salePrice: item.productId?.salePrice,
-      quantity: item.quantity,
-    }));
+  path: "items.productId",
+  select: "image title price salePrice",
+});
 
-   
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while deleting cart item",
-      error: "Failed to delete cart item",
-    });
-  }
+// 6. Format response data
+const updatedItems = cart.items.map((item) => ({
+  productId: item.productId ? item.productId._id : null,
+  title: item.productId?.title,
+  image: item.productId?.image,
+  price: item.productId?.price,
+  salePrice: item.productId?.salePrice,
+  quantity: item.quantity,
+}));
+
+// 7. Send response 
+return res.status(200).json({
+  success: true,
+  message: "Item removed from cart successfully",
+  data: updatedItems,
+})
+
+} catch (error) {
+return res.status(500).json({
+success: false,
+message: "An error occurred while deleting cart item",
+error: error.message,
+});
+}
 };
+
 
 
 module.exports = {

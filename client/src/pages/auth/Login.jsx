@@ -28,7 +28,8 @@ function AuthLogin() {
         navigate("/shop/home");
       } else {
         toast.error("Login failed", {
-          description: "Please try again",
+          description:
+            action.payload?.message || "Please try again",
         });
       }
     });

@@ -11,6 +11,27 @@ if (!JWT_SECRET) {
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
   try {
+    if (!username || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username, email, and password are required",
+      });
+    }
+
+    const existingUser = await User.findOne({
+      $or: [{ email }, { username }],
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message:
+          existingUser.email === email
+            ? "An account with this email already exists"
+            : "This username is already taken",
+      });
+    }
+
     const hashPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       username,
@@ -18,16 +39,28 @@ const registerUser = async (req, res) => {
       password: hashPassword,
     });
 
-    await newUser.save();
-    res.status(201).json({ message: "User created successfully" });
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+    });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Registration failed",
+    });
   }
 };
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({
@@ -56,6 +89,7 @@ const loginUser = async (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: false,
+        sameSite: "lax",
       })
       .status(200)
       .json({
@@ -71,12 +105,19 @@ const loginUser = async (req, res) => {
       });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      success: false,
+      message: error.message || "Login failed",
+    });
   }
 };
 const logoutUser = (req, res) => {
   res
-    .clearCookie("token")
+    .clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    })
     .status(200)
     .json({
       success: true,
@@ -96,7 +137,10 @@ const authMiddleware = (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
   }
 };
 

@@ -5,7 +5,7 @@ const {
   fetchCartItems,
   updateCartItemQty,
   deleteCartItem,
-} = require("../../controllers/shop/cart-controller");
+} = require("../../../controllers/shop/cart-controller");
 
 
 router.post("/add", addToCart);

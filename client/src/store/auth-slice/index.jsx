@@ -10,53 +10,98 @@ const initialState = {
 
 export const registerUser = createAsyncThunk(
   "auth/register",
-  async (formData) => {
-    const response = await axios.post(
-      "http://localhost:3000/api/auth/register",
-      formData,
-      {
-        withCredentials: true,
-      },
-    );
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        formData,
+        {
+          withCredentials: true,
+        },
+      );
 
-    return response.data;
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data ?? {
+          success: false,
+          message: "Registration failed",
+        },
+      );
+    }
   },
 );
 
-export const loginUser = createAsyncThunk("auth/login", async (formData) => {
-  const response = await axios.post(
-    "http://localhost:3000/api/auth/login",
-    formData,
-    {
-      withCredentials: true,
-    },
-  );
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        formData,
+        {
+          withCredentials: true,
+        },
+      );
 
-  return response.data;
-});
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data ?? {
+          success: false,
+          message: "Login failed",
+        },
+      );
+    }
+  },
+);
 
-export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  const response = await axios.post(
-    "http://localhost:3000/api/auth/logout",
-    {},
-    {
-      withCredentials: true,
-    },
-  );
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        },
+      );
 
-  return response.data;
-});
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data ?? {
+          success: false,
+          message: "Logout failed",
+        },
+      );
+    }
+  },
+);
 
-export const checkAuth = createAsyncThunk("auth/check-auth", async () => {
-  const response = await axios.get(
-    "http://localhost:3000/api/auth/check-auth",
-    {
-      withCredentials: true,
-    },
-  );
+export const checkAuth = createAsyncThunk(
+  "auth/check-auth",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/auth/check-auth",
+        {
+          withCredentials: true,
+        },
+      );
 
-  return response.data;
-});
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data ?? {
+          success: false,
+          message: "Unauthorized",
+        },
+      );
+    }
+  },
+);
 const authSlice = createSlice({
   name: "auth",
   initialState,
