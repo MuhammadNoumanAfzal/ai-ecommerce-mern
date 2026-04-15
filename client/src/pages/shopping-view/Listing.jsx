@@ -83,6 +83,8 @@ const ShoppingListing = () => {
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
+ 
+
   useEffect(() => {
     setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
@@ -168,7 +170,11 @@ const ShoppingListing = () => {
           )}
         </div>
       </div>
-      <ProductDetailsDialog open={open} setOpen={setOpen} productDetails={productDetails}/>
+      <ProductDetailsDialog
+        open={open}
+        setOpen={setOpen}
+        productDetails={productDetails}
+      />
     </div>
   );
 };

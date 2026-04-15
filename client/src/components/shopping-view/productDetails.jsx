@@ -14,7 +14,7 @@ function ProductDetailsDialog({
     productDetails?.salePrice && productDetails?.salePrice > 0;
 
   return (
-    <Dialog o  pen={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="grid max-h-[85vh] grid-cols-1 gap-5 overflow-y-auto p-4 sm:p-5 md:grid-cols-2 md:gap-6 max-w-[88vw] sm:max-w-[70vw] lg:max-w-[58vw]">
         {/* Product Image */}
         <div className="relative overflow-hidden rounded-xl border bg-muted/20">
@@ -91,12 +91,7 @@ function ProductDetailsDialog({
             ) : (
               <Button
                 className="w-full"
-                onClick={() =>
-                  handleAddToCart?.(
-                    productDetails?._id,
-                    productDetails?.totalStock,
-                  )
-                }
+                onClick={() => handleAddToCart?.(productDetails?._id)}
               >
                 Add to Cart
               </Button>

@@ -1,10 +1,13 @@
-import { HousePlug, LogOut, Menu, UserCog } from "lucide-react";
+import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
 import { logoutUser } from "@/store/auth-slice";
+import { useEffect, useState } from "react";
+import { fetchCartItems } from "@/store/shop/cart-slice";
+import CartWrapper from "./CartWrapper";
 
 // 👇 shadcn dropdown + avatar imports
 import {
@@ -38,8 +41,19 @@ function MenuItems() {
 // ---------------- Right Side (User) ----------------
 function HeaderRightContent({ user }) {
   const dispatch = useDispatch();
+  const { cartItems } = useSelector((state) => state.cart);
   const displayName = user?.username || user?.userName || user?.name || "";
   const avatarLetter = displayName?.trim()?.[0]?.toUpperCase() || "U";
+  const [openCartSheet, setOpenCartSheet] = useState(false);
+  const userId = user?.id || user?._id;
+  const totalCartItems =
+    cartItems?.items?.reduce((acc, item) => acc + (item?.quantity || 0), 0) || 0;
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchCartItems(userId));
+    }
+  }, [dispatch, userId]);
 
   function handleLogout() {
     dispatch(logoutUser());
@@ -47,6 +61,25 @@ function HeaderRightContent({ user }) {
 
   return (
     <div className="flex items-center gap-4">
+      <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="relative"
+          onClick={() => setOpenCartSheet(true)}
+        >
+          <ShoppingCart className="h-6 w-6" />
+          <span className="sr-only">Open cart</span>
+          {totalCartItems > 0 ? (
+            <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-xs font-bold text-white">
+              {totalCartItems}
+            </span>
+          ) : null}
+        </Button>
+
+        <CartWrapper cartItems={cartItems?.items || []} />
+      </Sheet>
+
       {/* Avatar Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -64,9 +97,11 @@ function HeaderRightContent({ user }) {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/shop/account">
             <UserCog className="mr-2 h-4 w-4" />
             Account
+            </Link>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={handleLogout}>

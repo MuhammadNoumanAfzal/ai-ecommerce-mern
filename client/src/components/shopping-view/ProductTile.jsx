@@ -3,7 +3,10 @@ import { Button } from "../ui/button";
 import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
 
-function ShoppingProductTile({ product, handleGetProductDetails }) {
+function ShoppingProductTile({
+  product,
+  handleGetProductDetails,
+}) {
   return (
     <Card className="w-full max-w-sm mx-auto">
       <div onClick={() => handleGetProductDetails(product?._id)}>
@@ -55,11 +58,13 @@ function ShoppingProductTile({ product, handleGetProductDetails }) {
       </div>
       <CardFooter>
         {product?.totalStock === 0 ? (
-          <Button className="w-full opacity-60 cursor-not-allowed">
+          <Button className="w-full opacity-60 cursor-not-allowed" disabled>
             Out Of Stock
           </Button>
         ) : (
-          <Button className="w-full">Add to cart</Button>
+          <Button className="w-full" onClick={() => handleGetProductDetails(product?._id)}>
+            View Details
+          </Button>
         )}
       </CardFooter>
     </Card>
