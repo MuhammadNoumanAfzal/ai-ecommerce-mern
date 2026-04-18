@@ -77,7 +77,10 @@ function HeaderRightContent({ user }) {
           ) : null}
         </Button>
 
-        <CartWrapper cartItems={cartItems?.items || []} />
+        <CartWrapper
+          cartItems={cartItems?.items || []}
+          setOpenCartSheet={setOpenCartSheet}
+        />
       </Sheet>
 
       {/* Avatar Dropdown */}

@@ -15,8 +15,10 @@ import {
   fetchAllFilteredProducts,
   fetchProductDetails,
 } from "@/store/shop/product-slice";
+import { addToCart } from "@/store/shop/cart-slice";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/productDetails";
+import { toast } from "sonner";
 
 const sortOptions = [
   { id: "price-lowtohigh", label: "Price: Low to High" },
@@ -43,6 +45,8 @@ const ShoppingListing = () => {
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts,
   );
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.cart);
 
   const [sort, setSort] = useState("price-lowtohigh");
   const [filters, setFilters] = useState({});
@@ -83,7 +87,48 @@ const ShoppingListing = () => {
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
- 
+  function handleAddToCart(getCurrentProductId) {
+    const userId = user?.id || user?._id;
+    const currentProduct = productList?.find(
+      (product) => product._id === getCurrentProductId,
+    );
+
+    if (!userId) {
+      toast.error("Please login to add items to your cart");
+      return;
+    }
+
+    if (!currentProduct) {
+      toast.error("Product not found");
+      return;
+    }
+
+    const currentCartItem = cartItems?.items?.find(
+      (item) => item.productId === getCurrentProductId,
+    );
+    const currentQuantity = currentCartItem?.quantity || 0;
+
+    if (currentQuantity >= currentProduct.totalStock) {
+      toast.error(`Only ${currentProduct.totalStock} item(s) available in stock`);
+      return;
+    }
+
+    dispatch(
+      addToCart({
+        userId,
+        productId: getCurrentProductId,
+        quantity: 1,
+      }),
+    ).then((data) => {
+      if (data?.payload?.success) {
+        toast.success("Item added to cart");
+        return;
+      }
+
+      toast.error(data?.payload?.message || "Failed to add item to cart");
+    });
+  }
+
 
   useEffect(() => {
     setSort("price-lowtohigh");
@@ -161,6 +206,7 @@ const ShoppingListing = () => {
                 key={productItem._id}
                 product={productItem}
                 handleGetProductDetails={handleGetProductDetails}
+                handleAddToCart={handleAddToCart}
               />
             ))
           ) : (
@@ -174,6 +220,7 @@ const ShoppingListing = () => {
         open={open}
         setOpen={setOpen}
         productDetails={productDetails}
+        handleAddToCart={handleAddToCart}
       />
     </div>
   );

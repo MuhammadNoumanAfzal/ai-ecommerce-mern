@@ -6,6 +6,7 @@ import { Badge } from "../ui/badge";
 function ShoppingProductTile({
   product,
   handleGetProductDetails,
+  handleAddToCart,
 }) {
   return (
     <Card className="w-full max-w-sm mx-auto">
@@ -58,13 +59,31 @@ function ShoppingProductTile({
       </div>
       <CardFooter>
         {product?.totalStock === 0 ? (
-          <Button className="w-full opacity-60 cursor-not-allowed" disabled>
-            Out Of Stock
-          </Button>
+          <div className="flex w-full gap-2">
+            <Button
+              className="w-full"
+              variant="outline"
+              onClick={() => handleGetProductDetails(product?._id)}
+            >
+              View Details
+            </Button>
+            <Button className="w-full opacity-60 cursor-not-allowed" disabled>
+              Out Of Stock
+            </Button>
+          </div>
         ) : (
-          <Button className="w-full" onClick={() => handleGetProductDetails(product?._id)}>
-            View Details
-          </Button>
+          <div className="flex w-full gap-2">
+            <Button
+              className="w-full"
+              variant="outline"
+              onClick={() => handleGetProductDetails(product?._id)}
+            >
+              View Details
+            </Button>
+            <Button className="w-full" onClick={() => handleAddToCart?.(product?._id)}>
+              Add to Cart
+            </Button>
+          </div>
         )}
       </CardFooter>
     </Card>
